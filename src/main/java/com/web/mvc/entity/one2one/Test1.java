@@ -31,8 +31,7 @@ public static void get(Long id) throws Exception {
     String json = mapper.writeValueAsString(person);
     System.out.println(json);
 }
-
-public static void query() throws Exception {
+public static void query() throws Exception{
     List<Person> list = em.createQuery("Select p From Person p", Person.class).getResultList();
     ObjectMapper mapper = new ObjectMapper();
     String json = mapper.writeValueAsString(list);
