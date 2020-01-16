@@ -1,5 +1,6 @@
 package com.web.mvc.entity.one2one;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
@@ -29,13 +30,14 @@ public class Husband {
     //可加入 SQL 外鍵約束 SQL
     //ALTER TABLE APP.HUSBAND ADD CONSTRAINT FK_WIFE FOREIGN KEY (WIFE_ID) REFERENCES APP.WIFE(ID);        
     //可移除 SQL 外鍵約束 SQL
-    //ALTER TABLE APP.HUSBAND DROP CONSTRAINT FK_WIFE;      
-// @JoinColumns( // 將 wife 資料加入 husband 中
+    //ALTER TABLE APP.HUSBAND DROP CONSTRAINT FK_WIFE;
+//    @JoinColumns( // 將 wife 資料加入 husband 中
 //            {
 //                @JoinColumn(name = "wife_id", referencedColumnName = "id"),
 //                @JoinColumn(name = "wife_mame", referencedColumnName = "name")
 //            }
-//    )          
+//    )
+    @JsonIgnoreProperties(value = { "husband" })        
     Wife wife;
     
     public Long getId() {

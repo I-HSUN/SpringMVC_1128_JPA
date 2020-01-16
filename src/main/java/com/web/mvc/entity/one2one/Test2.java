@@ -8,14 +8,14 @@ import javax.persistence.EntityManager;
 public class Test2 {
     static EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
     public static void main(String[] args) {
-       // add("John", "Mary");
+        add("John", "Mary");
 //        queryHusband();
 //        queryWife();
 //        get(Husband.class, 1051L);
 //        get(Wife.class, 1201L);
         
        // update(1051L, "Vincent", "Anita");
-delete(1151L);
+//delete(1151L);
         
     }
     
