@@ -4,17 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.mvc.entity.JPAUtil;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 public class Test1 {
 
 static EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
 
 public static void main(String[] args) throws Exception {
-      //add("老李");
+      add("老李");
         //get(1L);
         //query();
         //update(1L, "小英");
-        delete(1L);}
+       // delete(1L);}
+//query("老李");
+      //  queryKeyword("老%"); // 老%, %老% %老
+}
 
 public static void add(String name) {
     Person person = new Person();
@@ -33,6 +37,15 @@ public static void get(Long id) throws Exception {
 }
 public static void query() throws Exception{
     List<Person> list = em.createQuery("Select p From Person p", Person.class).getResultList();
+    ObjectMapper mapper = new ObjectMapper();
+    String json = mapper.writeValueAsString(list);
+    System.out.println(json);
+}
+
+public static void queryKeyword(String keyword) throws Exception{
+    TypedQuery<Person> q= em.createQuery("Select p From Person p", Person.class);
+q.setParameter("keyword",keyword);
+List<Person>list=q.getResultList();
     ObjectMapper mapper = new ObjectMapper();
     String json = mapper.writeValueAsString(list);
     System.out.println(json);
