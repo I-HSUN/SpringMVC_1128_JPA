@@ -7,16 +7,15 @@ import javax.persistence.EntityManager;
 
 public class Test2 {
     static EntityManager em = JPAUtil.getEntityManagerFactory().createEntityManager();
-    public static void main(String[] args) {
-        add("John", "Mary");
-//        queryHusband();
-//        queryWife();
+    public static void main(String[] args) throws Exception {
+//        add("John", "Mary");
+//        add("Tom", "Jane");
+        queryHusband();
+        queryWife();
 //        get(Husband.class, 1051L);
-//        get(Wife.class, 1201L);
-        
-       // update(1051L, "Vincent", "Anita");
-//delete(1151L);
-        
+//        get(Wife.class, 1301L);
+//        update(1251L, "Vincent", "Anita");
+//        delete(1151L);
     }
     
     public static void add(String name1, String name2) {
@@ -33,9 +32,10 @@ public class Test2 {
         em.getTransaction().commit();
         System.out.println("Add OK !");
     }
-    public static void queryHusband()throws  Exception{
-	List<Husband> list=em.createQuery("SELECT h FROM Husband h",Husband.class).getResultList();
-   print(list);
+
+    public static void queryHusband() throws Exception {
+        List<Husband> list = em.createQuery("Select h From Husband h", Husband.class).getResultList();
+        print(list);
     }
     
     public static void queryWife() throws Exception {
@@ -48,23 +48,22 @@ public class Test2 {
         print(object);
     }
     
-    public static void update(Long id,String name1,String name2) {
-	Husband husband=em.find(Husband.class, id);
-    if(husband==null)return;
-    Wife wife =husband.getWife();
-if(name1!=null){
-husband.setName(name1);
-}
-if(name2!=null){
-wife.setName(name2);
-  em.getTransaction().begin();
+    public static void update(Long id, String name1, String name2) {
+        Husband husband = em.find(Husband.class, id);
+        if(husband == null) return;
+        Wife wife = husband.getWife();
+        if(name1 != null) {
+            husband.setName(name1);
+        }
+        if(name2 != null) {
+            wife.setName(name2);
+        }
+        em.getTransaction().begin();
         em.persist(husband);
         em.getTransaction().commit();
-        System.out.println("update OK !");
-}
-
+        System.out.println("Update OK !");
     }
-
+    
     public static void delete(Long id) {
         Husband husband = em.find(Husband.class, id);
         if(husband == null) return;
