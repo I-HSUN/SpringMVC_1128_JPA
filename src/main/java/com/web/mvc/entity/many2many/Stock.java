@@ -55,4 +55,8 @@ public class Stock {
 	this.funds = funds;
     }
 
+    void setFund(Fund buyer) {
+	throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }   
