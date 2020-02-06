@@ -1,6 +1,5 @@
 package com.web.portfolio.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Set;
@@ -18,46 +17,61 @@ public class Classify implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
     @Column
     private String name;
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "classify")
+    
+    @Column
+    private Boolean transaction;
+    
+    @OneToMany(cascade=CascadeType.PERSIST, mappedBy="classify")
     @JsonIgnoreProperties("classify")
-    private Set<TStock> tStock;
+    private Set<TStock> tStocks;
 
     public Classify() {
     }
 
-    public Classify(String name) {
-	this.name = name;
+    public Classify(String name, Boolean transaction) {
+        this.name = name;
+        this.transaction = transaction;
     }
-
+    
     public Long getId() {
-	return id;
+        return id;
     }
 
     public void setId(Long id) {
-	this.id = id;
+        this.id = id;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
-    public Set<TStock> gettStock() {
-	return tStock;
+    public Set<TStock> gettStocks() {
+        return tStocks;
     }
 
-    public void settStock(Set<TStock> tStock) {
-	this.tStock = tStock;
+    public void settStocks(Set<TStock> tStocks) {
+        this.tStocks = tStocks;
+    }
+
+    public Boolean getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(Boolean transaction) {
+        this.transaction = transaction;
     }
 
     @Override
     public String toString() {
-	return "Classify{" + "id=" + id + ", name=" + name + '}';
+        return "Classify{" + "id=" + id + ", name=" + name + ", transaction=" + transaction + '}';
     }
-
+    
+    
 }
