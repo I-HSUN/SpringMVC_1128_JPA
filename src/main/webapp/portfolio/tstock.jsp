@@ -10,26 +10,27 @@
                 $("#myTable").on("click", "tr", function () {
                     var id = $(this).find('td').eq(0).text().trim();
                     //console.log(id);
-                    $.get("/SpringMVC/mvc/portfolio/classify/" + id, function (data, status) {
+                    $.get("/SpringMVC/mvc/portfolio/tstock/" + id, function (data, status) {
                         console.log(JSON.stringify(data));
                         $("#myform").find("#id").val(data.id);
                         $("#myform").find("#name").val(data.name);
-                        $("#myform").find("#transaction").prop('checked', data.transaction);
+                        $("#myform").find("#symbol").val(data.symbol);
+                        $("#myform").find("#classify_id").val(data.classify.id);
                     });
                 });
                 $("#add").on("click", function () {
                     var jsonObj = $('#myform').serializeObject();
                     var jsonStr = JSON.stringify(jsonObj);
-                    console.log(jsonStr);
                     $.ajax({
-                        url: "/SpringMVC/mvc/portfolio/classify/",
+                        url: "/SpringMVC/mvc/portfolio/tstock/",
                         type: "POST",
                         contentType: "application/json; charset=utf-8",
-                        data: jsonStr,
-                        async: true,
-                        cache: false,
-                        processData: false,
+                        data: jsonStr, //Stringified Json Object
+                        async: false, //Cross-domain requests and dataType: "jsonp" requests do not support synchronous operation
+                        cache: false, //This will force requested pages not to be cached by the browser  
+                        processData: false, //To avoid making query String instead of JSON
                         success: function (resposeJsonObject) {
+                            //alert(JSON.stringify(resposeJsonObject));
                             table_list();
                         }
                     });
@@ -37,16 +38,16 @@
                 $("#upt").on("click", function () {
                     var jsonObj = $('#myform').serializeObject();
                     var jsonStr = JSON.stringify(jsonObj);
-                    console.log(jsonStr);
                     $.ajax({
-                        url: "/SpringMVC/mvc/portfolio/classify/" + jsonObj.id,
+                        url: "/SpringMVC/mvc/portfolio/tstock/",
                         type: "PUT",
                         contentType: "application/json; charset=utf-8",
-                        data: jsonStr,
-                        async: true, 
-                        cache: false,
-                        processData: false,
+                        data: jsonStr, //Stringified Json Object
+                        async: false, //Cross-domain requests and dataType: "jsonp" requests do not support synchronous operation
+                        cache: false, //This will force requested pages not to be cached by the browser  
+                        processData: false, //To avoid making query String instead of JSON
                         success: function (resposeJsonObject) {
+                            //alert(JSON.stringify(resposeJsonObject));
                             table_list();
                         }
                     });
@@ -54,31 +55,45 @@
                 $("#del").on("click", function () {
                     var id = $("#myform").find("#id").val();
                     $.ajax({
-                        url: "/SpringMVC/mvc/portfolio/classify/" + id,
+                        url: "/SpringMVC/mvc/portfolio/tstock/" + id,
                         type: "DELETE",
-                        async: true,
-                        cache: false,
-                        processData: false,
+                        async: false, //Cross-domain requests and dataType: "jsonp" requests do not support synchronous operation
+                        cache: false, //This will force requested pages not to be cached by the browser  
+                        processData: false, //To avoid making query String instead of JSON
                         success: function (resposeJsonObject) {
+                            //alert(resposeJsonObject);
                             table_list();
                         }
                     });
                 });
                 
+                // Classify 下拉選單
+                classify_list();
+                
                 // 資料列表
                 table_list();
             });
 
-            function table_list() {
+            function classify_list() {
                 $.get("/SpringMVC/mvc/portfolio/classify/", function (datas, status) {
+                    console.log("Datas: " + datas);
+                    datas.map(function (data) {
+                        $('#classify_id').append('<option value="' + data.id + '">' + data.name + '</option>');
+                    });
+                });
+            }
+
+            function table_list() {
+                $.get("/SpringMVC/mvc/portfolio/tstock/", function (datas, status) {
                     console.log("Datas: " + datas);
                     $("#myTable tbody > tr").remove();
                     $.each(datas, function (i, item) {
-                        var html = '<tr><td>{0}</td><td>{1}</td><td>{2}</td></tr>';
+                        var html = '<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td></tr>';
                         $('#myTable').append(String.format(html,
                                 item.id,
                                 item.name,
-                                item.transaction
+                                item.symbol,
+                                item.classify.name
                                 ));
                     });
                 });
@@ -95,8 +110,8 @@
 
             <div id="main">
                 <div class="header">
-                    <h1>Classify</h1>
-                    <h2>商品分類</h2>
+                    <h1>TStock</h1>
+                    <h2>股票、指數、匯率</h2>
                 </div>
                 <table>
                     <td valign="top">
@@ -104,9 +119,11 @@
                             <form id="myform" class="pure-form">
                                 <fieldset>
                                     <legend> <h2 class="content-subhead">資料維護</h2></legend>
-                                    <input id="id" vslue="0" name="id" placeholder="ID" readonly="true"/><p />
-                                    <input id="name" name="name" placeholder="分類名稱"/><p />
-                                    <input id="transaction" name="transaction" type="checkbox" /> Transaction<p />
+
+                                    <input id="id" vslue="0"   name="id" placeholder="ID" readonly="true"/><p />
+                                    <input id="name" name="name" placeholder="商品名稱"/><p />
+                                    <input id="symbol" name="symbol" placeholder="商品代號"/><p />
+                                    商品分類：<select id="classify_id" name="classify_id"></select><p />  
                                     <button id="add" type="button" class="pure-button pure-button-primary">新增</button>
                                     <button id="upt" type="button" class="pure-button pure-button-primary">修改</button>
                                     <button id="del" type="button" class="pure-button pure-button-primary">刪除</button>
@@ -124,7 +141,8 @@
                                             <tr>
                                                 <th>id</th>
                                                 <th>name</th>
-                                                <th>transaction</th>
+                                                <th>symbol</th>
+                                                <th>classify name</th>
                                             </tr>
                                         </thead>
 

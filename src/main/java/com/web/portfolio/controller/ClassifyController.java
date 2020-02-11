@@ -1,6 +1,6 @@
 package com.web.portfolio.controller;
 
-import com.web.portfolio.entity.Investor;
+import com.web.portfolio.entity.Classify;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import javax.transaction.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,51 +25,54 @@ public class ClassifyController {
     protected EntityManager em;
     
     @GetMapping(value = {"/", "/query"})
-    public List<Investor> query() {
-        Query query = em.createQuery("select i from Investor i");
-        List<Investor> list = query.getResultList();
+    public List<Classify> query() {
+        Query query = em.createQuery("select c from Classify c");
+        List<Classify> list = query.getResultList();
         return list;
     }
     
     @GetMapping(value = {"/{id}", "/get/{id}"})
-    public Investor get(@PathVariable("id") Long id) {
-        Investor investor = em.find(Investor.class, id);
-        if(investor != null && investor.getPortfolios() != null && investor.getPortfolios().size() > 0) {
-            investor.getPortfolios().size();
+    @Transactional
+    public Classify get(@PathVariable("id") Long id) {
+        //FinCategory finCategory = (FinCategory)em.createQuery("SELECT f FROM FinCategory f JOIN FETCH f.finProducts WHERE f.fca_id = " + id).getSingleResult();
+        Classify classify = em.find(Classify.class, id);
+        //!!!!!因為是延遲加載，通過執行size()這種方式所有子項
+        if ( classify != null && classify.gettStocks() != null) {
+            classify.gettStocks().size();
         }
-        if(investor != null && investor.getWatchs()!= null && investor.getWatchs().size() > 0) {
-            investor.getWatchs().size();
-        }
-        return investor;
+        return classify;
     }
     
     @PostMapping(value = {"/", "/add"})
     @Transactional
-    public Investor add(@RequestBody Map<String, String> map) {
-        Investor investor = new Investor();
-        investor.setUsername(map.get("username"));
-        investor.setPassword(map.get("password"));
-        investor.setEmail(map.get("email"));
-        investor.setBalance(Integer.parseInt(map.get("balance")));
-        em.persist(investor);
+    public Classify add(@RequestBody Map<String, String> map) {
+        Classify classify = new Classify();
+        classify.setName(map.get("name"));
+        System.out.println("map: " + map);
+        if(map.get("transaction") == null)
+            classify.setTransaction(false);
+        else
+            classify.setTransaction(true);
+        em.persist(classify);
         // 取得最新 id
         em.flush();
-        Long id = investor.getId();
-        return investor;
+        Long id = classify.getId();
+        return get(id);
     }
     
     @PutMapping(value = {"/{id}", "/update/{id}"})
     @Transactional
     public Boolean update(@PathVariable("id") Long id, @RequestBody Map<String, String> map) {
-        Investor o_Investor = get(id);
-        if (o_Investor == null) {
+        Classify o_Classify = get(id);
+        if (o_Classify == null) {
             return false;
         }
-        o_Investor.setUsername(map.get("username"));
-        o_Investor.setPassword(map.get("password"));
-        o_Investor.setEmail(map.get("email"));
-        o_Investor.setBalance(Integer.parseInt(map.get("balance")));
-        em.persist(o_Investor);
+        o_Classify.setName(map.get("name"));
+        if(map.get("transaction") == null)
+            o_Classify.setTransaction(false);
+        else
+            o_Classify.setTransaction(true);
+        em.persist(o_Classify);
         em.flush();
         return true;
     }
@@ -80,4 +84,5 @@ public class ClassifyController {
         em.flush();
         return get(id) == null ? true : false;
     }
+    
 }
