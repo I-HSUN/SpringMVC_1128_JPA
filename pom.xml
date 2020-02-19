@@ -169,11 +169,38 @@
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+            <!-- set the version to be the same as the level in your runtime -->
+            <version>2.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            
+            <plugin>
+                <groupId>org.apache.openjpa</groupId>
+                <artifactId>openjpa-maven-plugin</artifactId>
+                <version>2.2.0</version>
+                <configuration>
+                    <includes>**/SpringMVC/*.class</includes>
+                    <excludes>**/SpringMVC/XML*.class</excludes>
+                    <addDefaultConstructor>true</addDefaultConstructor>
+                    <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>enhancer</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>enhance</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
