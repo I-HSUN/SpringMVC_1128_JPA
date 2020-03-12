@@ -7,7 +7,6 @@
         <%@include file="/WEB-INF/jsp/include/head.jspf"  %>
         <script>
             var watch_id = ${sessionScope.watch_id};
-
             $(document).ready(function () {
                 watchList();
                 // 走勢圖
@@ -40,7 +39,6 @@
                     }
                 });
             });
-
             function watchList() {
                 $.get("/SpringMVC/mvc/portfolio/watch/" + watch_id, function (data, status) {
                     console.log(JSON.stringify(data));
@@ -90,7 +88,6 @@
                     drawChart(symbol, quotes);
                 });
             }
-
             function drawChart(symbol, quotes) {
                 // 建立 data 欄位
                 var data = new google.visualization.DataTable();
@@ -101,12 +98,10 @@
                 data.addColumn('number', 'Low');
                 data.addColumn('number', 'AdjClose');
                 data.addColumn('number', 'Volumn');
-
                 $.each(quotes, function (i, item) {
                     var array = [getMD(quotes[i].date), quotes[i].high, quotes[i].open, quotes[i].close, quotes[i].low, quotes[i].adjClose, quotes[i].volume];
                     data.addRow(array);
                 });
-
                 // 設定 chart 參數
                 var options = {
                     title: symbol + ' 日K線圖',
